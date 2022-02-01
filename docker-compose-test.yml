@@ -2,7 +2,7 @@ version: '3.5'
 services:
   app:
     build:
-      context: ./docker
+      context: ./docker/test
       dockerfile: Dockerfile
     ports:
       - 3000:3000
