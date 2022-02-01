@@ -1,0 +1,12 @@
+version: '3.5'
+services:
+  app:
+    build:
+      context: ./docker
+      dockerfile: Dockerfile
+    ports:
+      - 3000:3000
+    volumes:
+      - .:/app
+  redis:
+    image: redis:latest
