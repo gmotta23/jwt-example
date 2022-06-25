@@ -5,9 +5,12 @@ declare global {
       SERVER_PORT: string;
       ACCESS_TOKEN_SECRET: string;
       REFRESH_TOKEN_SECRET: string;
-      NODE_ENV: 'development' | 'production';
+      NODE_ENV: "development" | "test" | "production";
+      ACCESS_TOKEN_EXPIRATION: string;
+      REFRESH_TOKEN_EXPIRATION: string;
+      REFRESH_TOKEN_TTL: string;
     }
   }
 }
 
-export {}
+export {};

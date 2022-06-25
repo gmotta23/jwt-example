@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 
-export class JWTFactory {
+export class JWTService {
   public static generateToken(
     payload: string,
     secret: string,

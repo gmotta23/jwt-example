@@ -2,4 +2,4 @@
 npm ci
 
 # Run in test mode
-npm run test
+npm run test-watch
