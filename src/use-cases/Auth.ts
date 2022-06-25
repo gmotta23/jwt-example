@@ -19,7 +19,7 @@ const AuthUseCases = {
   generateAccessAndRefreshTokens: (payload: any) => {
     return {
       access_token: AuthUseCases.generateAccessToken(payload),
-      refresh_token: AuthUseCases.generateAccessToken(payload),
+      refresh_token: AuthUseCases.generateRefreshToken(payload),
     };
   },
   saveRefreshTokenOnRedis: (refresh_token: string) => {},

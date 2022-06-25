@@ -1,13 +1,25 @@
 import chai, { expect } from "chai";
+import spies from "chai-spies";
 import app from "../app";
 import request from "supertest";
 import AuthUseCases from "../use-cases/Auth";
 
-describe("Units", () => {
-  it("generateAccessToken calls ...", () => {
-    // const payload = "test";
-    // const result = AuthUseCases.generateAccessAndRefreshTokens(payload);
-    // console.log(result);
+chai.use(spies);
+
+describe("Unit tests", () => {
+  it("generateAccessAndRefreshTokens calls generateAccessToken and generateRefreshToken", () => {
+    const payload = "test";
+
+    chai.spy.on(AuthUseCases, "generateAccessToken");
+    chai.spy.on(AuthUseCases, "generateRefreshToken");
+
+    expect(AuthUseCases.generateAccessToken).to.not.have.been.called();
+    expect(AuthUseCases.generateRefreshToken).to.not.have.been.called();
+
+    AuthUseCases.generateAccessAndRefreshTokens(payload);
+
+    expect(AuthUseCases.generateAccessToken).to.have.been.called.with(payload);
+    expect(AuthUseCases.generateRefreshToken).to.have.been.called.with(payload);
   });
 });
 
