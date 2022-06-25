@@ -3,10 +3,31 @@ import spies from "chai-spies";
 import app from "../app";
 import request from "supertest";
 import AuthUseCases from "../use-cases/Auth";
+import { JWTService } from "../services/Auth";
 
 chai.use(spies);
 
 describe("Unit tests", () => {
+  before(() => {
+    chai.spy.on(JWTService, "generateToken");
+  });
+
+  it("generateAccessToken calls JWTService.generateToken", () => {
+    const payload = "test";
+
+    AuthUseCases.generateAccessToken(payload);
+
+    expect(JWTService.generateToken).to.have.been.called();
+  });
+
+  it("generateRefreshToken calls JWTService.generateToken", () => {
+    const payload = "test";
+
+    AuthUseCases.generateRefreshToken(payload);
+
+    expect(JWTService.generateToken).to.have.been.called();
+  });
+
   it("generateAccessAndRefreshTokens calls generateAccessToken and generateRefreshToken", () => {
     const payload = "test";
 
@@ -24,6 +45,12 @@ describe("Unit tests", () => {
 });
 
 describe("Authentication", () => {
+  // should register an user correctly, receiving correct tokens
+  // should register and login with user correctly, receiving correct tokens
+  // should fail to login correctly, not receiving correct tokens
+  // on refresh should receive access token if refresh token exists
+  // on refresh should not receive access token if refresh token not exists
+  /** */
   // it("should register an user correctly, receiving correct tokens", async () => {
   //   let response = await request(app)
   //     .post("/register")
