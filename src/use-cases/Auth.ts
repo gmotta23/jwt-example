@@ -5,10 +5,15 @@ import { JWTService } from "../services/Auth";
 
 const AuthUseCases = {
   createUser: (user: User) => {
+    // ideally hashing should be used here
     return UsersDBFunctions.create(user);
   },
   getUserByUsername: (username: string) => {
     return UsersDBFunctions.getByUsername(username);
+  },
+  passwordIsValid: (input_password: string, db_password: string) => {
+    // ideally hashing should be used here
+    return input_password === db_password;
   },
   generateAccessToken: (payload: any) => {
     return JWTService.generateToken(

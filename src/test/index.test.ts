@@ -5,7 +5,7 @@ import request from "supertest";
 import AuthUseCases from "../use-cases/Auth";
 import { JWTService } from "../services/Auth";
 import { testCommands } from "./commands";
-import { User } from "../db/postgres";
+import { database, User } from "../db/postgres";
 
 chai.use(spies);
 
@@ -50,9 +50,10 @@ describe("Authentication", () => {
   beforeEach(() => {
     testCommands.resetDB();
   });
+
   it("should register an user correctly, receiving correct tokens", async () => {
     const newUser: User = {
-      username: "gmtc",
+      username: "register",
       password: "password",
     };
     const response = await request(app).post("/register").send(newUser);
@@ -62,8 +63,35 @@ describe("Authentication", () => {
     expect(access_token).to.exist;
     expect(refresh_token).to.exist;
   });
-  // should register and login with user correctly, receiving correct tokens
-  // should fail to login correctly, not receiving correct tokens
+
+  it("should register and login with user correctly, receiving correct tokens", async () => {
+    const user: User = {
+      username: "login",
+      password: "password",
+    };
+    await request(app).post("/register").send(user);
+    const login = await request(app).post("/login").send(user);
+
+    const { access_token, refresh_token } = login.body;
+
+    expect(access_token).to.exist;
+    expect(refresh_token).to.exist;
+  });
+
+  it("should fail to login correctly, not receiving correct tokens", async () => {
+    const user: User = {
+      username: "login",
+      password: "password",
+    };
+    const incorrectPasswordUser = { ...user, password: "incorrect_password" };
+    const register = await request(app).post("/register").send(user);
+    const login = await request(app).post("/login").send(incorrectPasswordUser);
+
+    const { access_token, refresh_token } = login.body;
+
+    expect(access_token).to.not.exist;
+    expect(refresh_token).to.not.exist;
+  });
   // on refresh should receive access token if refresh token exists
   // on refresh should not receive access token if refresh token not exists
   /** */

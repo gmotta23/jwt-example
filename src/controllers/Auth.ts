@@ -25,21 +25,34 @@ const AuthController = {
     });
   },
   login: async (req: Request, res: Response) => {
-    try {
-      // const { username } = req.body;
-      // const { access_token, refresh_token } =
-      //   AuthUseCases.generateAccessAndRefreshTokens(username);
-      // refreshTokens.push(refresh_token); // Implement this on db functions (Redis)
-      // // refresh token expiration should be the ttl, so the refresh token is always valid?
-      // // there should be a request somewhere to check if there is a refresh token
-      // // that request should respond with a new access token
-      // res.json({
-      //   access_token,
-      //   refresh_token,
-      // });
-    } catch (error) {
-      console.log(error);
+    const { username, password } = req.body;
+
+    const user = AuthUseCases.getUserByUsername(username);
+
+    if (!user) {
+      return res.json({
+        message: "User not found.",
+      });
     }
+
+    const passwordIsValid = AuthUseCases.passwordIsValid(
+      password,
+      user.password
+    );
+
+    if (!passwordIsValid) {
+      return res.json({
+        message: "User or password invalid.",
+      });
+    }
+
+    const { access_token, refresh_token } =
+      AuthUseCases.generateAccessAndRefreshTokens(username);
+
+    res.json({
+      access_token,
+      refresh_token,
+    });
   },
   refreshAccessToken: async (req: Request, res: Response) => {
     // receives access token => gets username/userId
