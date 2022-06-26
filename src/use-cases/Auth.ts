@@ -1,7 +1,15 @@
 require("dotenv").config();
+import { User } from "../db/postgres";
+import { UsersDBFunctions } from "../db/postgres/functions";
 import { JWTService } from "../services/Auth";
 
 const AuthUseCases = {
+  createUser: (user: User) => {
+    return UsersDBFunctions.create(user);
+  },
+  getUserByUsername: (username: string) => {
+    return UsersDBFunctions.getByUsername(username);
+  },
   generateAccessToken: (payload: any) => {
     return JWTService.generateToken(
       payload,

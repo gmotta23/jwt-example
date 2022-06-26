@@ -1,32 +1,42 @@
 require("dotenv").config();
 import { Request, Response } from "express";
-import { JWTService } from "../services/Auth";
+import { User } from "../db/postgres";
 import AuthUseCases from "../use-cases/Auth";
-
-let refreshTokens = []; // This will go to Redis.
 
 const AuthController = {
   register: async (req: Request, res: Response) => {
-    // receives username and password
-    // adds to db
+    const { username, password } = req.body;
+    const newUser: User = { username, password };
+
+    const success = AuthUseCases.createUser(newUser);
+
+    if (!success) {
+      return res.json({
+        message: "Something wrong happened.",
+      });
+    }
+
+    const { access_token, refresh_token } =
+      AuthUseCases.generateAccessAndRefreshTokens(username);
+
+    res.json({
+      access_token,
+      refresh_token,
+    });
   },
   login: async (req: Request, res: Response) => {
     try {
-      const { username } = req.body;
-
-      const { access_token, refresh_token } =
-        AuthUseCases.generateAccessAndRefreshTokens(username);
-
-      refreshTokens.push(refresh_token); // Implement this on db functions (Redis)
-      // refresh token expiration should be the ttl, so the refresh token is always valid?
-
-      // there should be a request somewhere to check if there is a refresh token
-      // that request should respond with a new access token
-
-      res.json({
-        access_token,
-        refresh_token,
-      });
+      // const { username } = req.body;
+      // const { access_token, refresh_token } =
+      //   AuthUseCases.generateAccessAndRefreshTokens(username);
+      // refreshTokens.push(refresh_token); // Implement this on db functions (Redis)
+      // // refresh token expiration should be the ttl, so the refresh token is always valid?
+      // // there should be a request somewhere to check if there is a refresh token
+      // // that request should respond with a new access token
+      // res.json({
+      //   access_token,
+      //   refresh_token,
+      // });
     } catch (error) {
       console.log(error);
     }

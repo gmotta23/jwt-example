@@ -4,6 +4,8 @@ import app from "../app";
 import request from "supertest";
 import AuthUseCases from "../use-cases/Auth";
 import { JWTService } from "../services/Auth";
+import { testCommands } from "./commands";
+import { User } from "../db/postgres";
 
 chai.use(spies);
 
@@ -45,7 +47,21 @@ describe("Unit tests", () => {
 });
 
 describe("Authentication", () => {
-  // should register an user correctly, receiving correct tokens
+  beforeEach(() => {
+    testCommands.resetDB();
+  });
+  it("should register an user correctly, receiving correct tokens", async () => {
+    const newUser: User = {
+      username: "gmtc",
+      password: "password",
+    };
+    const response = await request(app).post("/register").send(newUser);
+
+    const { access_token, refresh_token } = response.body;
+
+    expect(access_token).to.exist;
+    expect(refresh_token).to.exist;
+  });
   // should register and login with user correctly, receiving correct tokens
   // should fail to login correctly, not receiving correct tokens
   // on refresh should receive access token if refresh token exists

@@ -1,10 +1,13 @@
-import { User, Users } from ".";
+import { User, database } from ".";
 
 export const UsersDBFunctions = {
   create: (user: User) => {
-    Users.push(user);
+    return database.addUser(user);
   },
   getByUsername: (username: string) => {
-    return Users.find((user: User) => user.username === username);
+    return database.getUser(username);
+  },
+  reset: () => {
+    database.resetUsers();
   },
 };
