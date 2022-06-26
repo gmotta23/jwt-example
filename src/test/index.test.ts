@@ -92,21 +92,30 @@ describe("Authentication", () => {
     expect(access_token).to.not.exist;
     expect(refresh_token).to.not.exist;
   });
-  // on refresh should receive access token if refresh token exists
-  // on refresh should not receive access token if refresh token not exists
-  /** */
-  // it("should register an user correctly, receiving correct tokens", async () => {
-  //   let response = await request(app)
-  //     .post("/register")
-  //     .send({ username: "gmtc" });
-  //   // expect().to.be.call()
-  // });
-  // it("should login as an user and return status 200, access_token and refresh_token", async () => {
-  //   let response = await request(app).post("/login").send({ username: "gmtc" });
-  //   let { access_token, refresh_token } = response.body;
-  //   expect(access_token.length).to.be.eq(151);
-  //   expect(refresh_token.length).to.be.eq(128);
-  // });
-  // it("refresh should respond with a new access token if refresh token found");
-  // it("refresh should respond with nothing if refresh token not found");
+
+  it("on refresh should receive access token if refresh token exists", async () => {
+    const user: User = {
+      username: "register",
+      password: "password",
+    };
+    const register = await request(app).post("/register").send(user);
+
+    const { access_token, refresh_token } = register.body;
+
+    const refresh = await request(app)
+      .post("/refresh_access_token")
+      .send({ refresh_token });
+
+    expect(refresh.body.access_token).to.exist;
+  });
+
+  it("on refresh should not receive access token if refresh token not exists", async () => {
+    const fake_refresh_token = "fake_refresh_token";
+
+    const refresh = await request(app)
+      .post("/refresh_access_token")
+      .send({ refresh_token: fake_refresh_token });
+
+    expect(refresh.body.access_token).to.not.exist;
+  });
 });

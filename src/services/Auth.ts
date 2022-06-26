@@ -1,8 +1,12 @@
 import jwt from "jsonwebtoken";
 
+export interface UserJwtPayload extends jwt.JwtPayload {
+  username: string;
+}
+
 export class JWTService {
   public static generateToken(
-    payload: string,
+    payload: string | Object,
     secret: string,
     expiration_time?: string
   ) {
@@ -11,5 +15,8 @@ export class JWTService {
       : undefined;
 
     return jwt.sign({ payload }, secret, jwt_options);
+  }
+  public static getTokenPayload(token: string, secret: string) {
+    return <UserJwtPayload>jwt.verify(token, secret);
   }
 }

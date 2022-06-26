@@ -17,7 +17,9 @@ const AuthController = {
     }
 
     const { access_token, refresh_token } =
-      AuthUseCases.generateAccessAndRefreshTokens(username);
+      AuthUseCases.generateAccessAndRefreshTokens({ username });
+
+    AuthUseCases.saveRefreshTokenOnRedis(username, refresh_token);
 
     res.json({
       access_token,
@@ -47,7 +49,9 @@ const AuthController = {
     }
 
     const { access_token, refresh_token } =
-      AuthUseCases.generateAccessAndRefreshTokens(username);
+      AuthUseCases.generateAccessAndRefreshTokens({ username });
+
+    AuthUseCases.saveRefreshTokenOnRedis(username, refresh_token);
 
     res.json({
       access_token,
@@ -55,10 +59,28 @@ const AuthController = {
     });
   },
   refreshAccessToken: async (req: Request, res: Response) => {
-    // receives access token => gets username/userId
-    // check if on redis there is a refresh token
-    // if true create new access token and return
-    // if false return nothing
+    // this controller should be propected by access_token
+    const { refresh_token: input_refresh_token } = req.body;
+
+    const {
+      payload: { username },
+    } = AuthUseCases.getRefreshTokenPayload(input_refresh_token);
+
+    if (!username) {
+      return res.json({});
+    }
+
+    const refresh_token_on_redis =
+      AuthUseCases.getRefreshTokenOnRedis(username);
+
+    if (!refresh_token_on_redis) {
+      return res.json({});
+    }
+
+    const { access_token, refresh_token } =
+      AuthUseCases.generateAccessAndRefreshTokens({ username });
+
+    res.json({ access_token, refresh_token });
   },
 };
 

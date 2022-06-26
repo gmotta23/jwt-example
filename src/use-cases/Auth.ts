@@ -1,6 +1,7 @@
 require("dotenv").config();
 import { User } from "../db/postgres";
 import { UsersDBFunctions } from "../db/postgres/functions";
+import { RedisFunctions } from "../db/redis/functions";
 import { JWTService } from "../services/Auth";
 
 const AuthUseCases = {
@@ -35,7 +36,22 @@ const AuthUseCases = {
       refresh_token: AuthUseCases.generateRefreshToken(payload),
     };
   },
-  saveRefreshTokenOnRedis: (refresh_token: string) => {},
+  getRefreshTokenPayload: (token: string) => {
+    try {
+      return JWTService.getTokenPayload(
+        token,
+        process.env.REFRESH_TOKEN_SECRET
+      );
+    } catch (error) {
+      return { payload: { username: undefined } };
+    }
+  },
+  saveRefreshTokenOnRedis: (username: string, refresh_token: string) => {
+    RedisFunctions.set(username, refresh_token);
+  },
+  getRefreshTokenOnRedis: (username: string) => {
+    return RedisFunctions.get(username);
+  },
 };
 
 export default AuthUseCases;
