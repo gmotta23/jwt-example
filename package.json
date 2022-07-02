@@ -7,7 +7,6 @@
     "dev": "tsc-watch --onSuccess 'node build/app.js'",
     "build": "tsc",
     "start": "node build/app.js",
-    "test": "ts-mocha src/test/**/*.spec.ts",
     "test-watch": "tsc-watch --onSuccess 'ts-mocha src/test/index.test.ts'"
   },
   "repository": {
