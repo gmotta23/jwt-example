@@ -46,11 +46,15 @@ const AuthUseCases = {
       return { payload: { username: undefined } };
     }
   },
-  saveRefreshTokenOnRedis: (username: string, refresh_token: string) => {
-    RedisFunctions.set(username, refresh_token);
+  saveRefreshTokenOnRedis: async (username: string, refresh_token: string) => {
+    return await RedisFunctions.set(
+      username,
+      refresh_token,
+      Number(process.env.REFRESH_TOKEN_TTL)
+    );
   },
-  getRefreshTokenOnRedis: (username: string) => {
-    return RedisFunctions.get(username);
+  getRefreshTokenOnRedis: async (username: string) => {
+    return await RedisFunctions.get(username);
   },
 };
 

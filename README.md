@@ -4,7 +4,7 @@ This project is a simple example of how json web tokens can be used with NodeJS.
 
 To run it you will need [Docker](https://www.docker.com/) and [Docker-Compose](https://docs.docker.com/compose/) installed in your machine.
 
-Before running it make sure your .env file is set up
+Before running it make sure your .env file is set up by running
 
 `
 cp .env.example .env

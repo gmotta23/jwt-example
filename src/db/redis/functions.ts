@@ -1,10 +1,14 @@
-import { redisDB } from ".";
+import { Redis } from ".";
 
 export const RedisFunctions = {
-  set: (key: string, value: string) => {
-    redisDB[key] = value;
+  set: async (key: string, value: string, expiration_time?: number) => {
+    return await (
+      await Redis.client()
+    ).set(key, value, {
+      EX: expiration_time ? expiration_time : 0,
+    });
   },
-  get: (key: string) => {
-    return redisDB[key];
+  get: async (key: string) => {
+    return await (await Redis.client()).get(key);
   },
 };

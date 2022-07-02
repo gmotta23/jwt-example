@@ -9,6 +9,7 @@ declare global {
       ACCESS_TOKEN_EXPIRATION: string;
       REFRESH_TOKEN_EXPIRATION: string;
       REFRESH_TOKEN_TTL: string;
+      REDIS_URL: string;
     }
   }
   namespace Express {

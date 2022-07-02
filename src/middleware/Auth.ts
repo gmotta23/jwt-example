@@ -19,11 +19,11 @@ const AuthMiddleware = {
       req.user = payload;
 
       next();
+    } else {
+      res.status(403).json({
+        message: "You need to be authenticated for this.",
+      });
     }
-
-    res.status(403).json({
-      message: "You need to be authenticated for this.",
-    });
   },
 };
 

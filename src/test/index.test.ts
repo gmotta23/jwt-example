@@ -62,8 +62,9 @@ describe("Unit tests", () => {
 });
 
 describe("Authentication", () => {
-  beforeEach(() => {
+  beforeEach(async () => {
     testCommands.resetDB();
+    await testCommands.resetRedis();
   });
 
   it("should register an user correctly, receiving correct tokens", async () => {
@@ -143,7 +144,7 @@ describe("Authentication", () => {
 
   it("on refresh should receive access token if refresh token exists and access token is provided", async () => {
     const user: User = {
-      username: "register",
+      username: "refresh",
       password: "password",
     };
     const register = await request(app).post("/register").send(user);

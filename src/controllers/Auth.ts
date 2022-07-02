@@ -69,8 +69,9 @@ const AuthController = {
       return res.status(400).json({});
     }
 
-    const refresh_token_on_redis =
-      AuthUseCases.getRefreshTokenOnRedis(username);
+    const refresh_token_on_redis = await AuthUseCases.getRefreshTokenOnRedis(
+      username
+    );
 
     if (!refresh_token_on_redis) {
       return res.status(400).json({});
