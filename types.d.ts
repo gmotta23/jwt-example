@@ -11,6 +11,11 @@ declare global {
       REFRESH_TOKEN_TTL: string;
     }
   }
+  namespace Express {
+    export interface Request {
+      user: any;
+    }
+  }
 }
 
 export {};

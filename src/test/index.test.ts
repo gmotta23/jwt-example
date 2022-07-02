@@ -108,9 +108,40 @@ describe("Authentication", () => {
     expect(refresh_token).to.not.exist;
   });
 
-  // should fail to access refresh without access token
+  it("on refresh should fail to receive access token if access token isn't provided (Middleware block)", async () => {
+    const user: User = {
+      username: "register",
+      password: "password",
+    };
+    const register = await request(app).post("/register").send(user);
+    const { refresh_token } = register.body;
 
-  it("on refresh should receive access token if refresh token exists", async () => {
+    const refresh = await request(app)
+      .post("/refresh_access_token")
+      .send({ refresh_token: refresh_token });
+
+    expect(refresh.status).to.eq(403);
+    expect(refresh.body.access_token).not.to.exist;
+  });
+
+  it("on refresh should not receive access token if refresh token is provided incorrectly", async () => {
+    const user: User = {
+      username: "register",
+      password: "password",
+    };
+    const register = await request(app).post("/register").send(user);
+    const { access_token, refresh_token } = register.body;
+
+    const refresh = await request(app)
+      .post("/refresh_access_token")
+      .send({ refresh_token: refresh_token + "incorrect!" })
+      .set("authorization", `Bearer ${access_token}`);
+
+    expect(refresh.status).to.eq(400);
+    expect(refresh.body.access_token).not.to.exist;
+  });
+
+  it("on refresh should receive access token if refresh token exists and access token is provided", async () => {
     const user: User = {
       username: "register",
       password: "password",
@@ -121,18 +152,10 @@ describe("Authentication", () => {
 
     const refresh = await request(app)
       .post("/refresh_access_token")
-      .send({ refresh_token });
+      .send({ refresh_token })
+      .set("authorization", `Bearer ${access_token}`);
 
     expect(refresh.body.access_token).to.exist;
-  });
-
-  it("on refresh should not receive access token if refresh token not exists", async () => {
-    const fake_refresh_token = "fake_refresh_token";
-
-    const refresh = await request(app)
-      .post("/refresh_access_token")
-      .send({ refresh_token: fake_refresh_token });
-
-    expect(refresh.body.access_token).to.not.exist;
+    expect(refresh.status).to.eq(200);
   });
 });

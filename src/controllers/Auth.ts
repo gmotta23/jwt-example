@@ -59,7 +59,6 @@ const AuthController = {
     });
   },
   refreshAccessToken: async (req: Request, res: Response) => {
-    // this controller should be propected by access_token
     const { refresh_token: input_refresh_token } = req.body;
 
     const {
@@ -67,14 +66,14 @@ const AuthController = {
     } = AuthUseCases.getRefreshTokenPayload(input_refresh_token);
 
     if (!username) {
-      return res.json({});
+      return res.status(400).json({});
     }
 
     const refresh_token_on_redis =
       AuthUseCases.getRefreshTokenOnRedis(username);
 
     if (!refresh_token_on_redis) {
-      return res.json({});
+      return res.status(400).json({});
     }
 
     const { access_token, refresh_token } =
