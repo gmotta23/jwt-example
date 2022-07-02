@@ -3,9 +3,10 @@ import spies from "chai-spies";
 import app from "../app";
 import request from "supertest";
 import AuthUseCases from "../use-cases/Auth";
-import { JWTService } from "../services/Auth";
+import { JWTService } from "../services/jwt";
 import { testCommands } from "./commands";
-import { database, User } from "../db/postgres";
+import { User } from "../db/postgres";
+import { UsersDBFunctions } from "../db/postgres/functions";
 
 chai.use(spies);
 
@@ -14,7 +15,7 @@ describe("Unit tests", () => {
     chai.spy.on(JWTService, "generateToken");
   });
 
-  it("generateAccessToken calls JWTService.generateToken", () => {
+  it("AuthUseCases.generateAccessToken calls JWTService.generateToken", () => {
     const payload = "test";
 
     AuthUseCases.generateAccessToken(payload);
@@ -22,7 +23,7 @@ describe("Unit tests", () => {
     expect(JWTService.generateToken).to.have.been.called();
   });
 
-  it("generateRefreshToken calls JWTService.generateToken", () => {
+  it("AuthUseCases.generateRefreshToken calls JWTService.generateToken", () => {
     const payload = "test";
 
     AuthUseCases.generateRefreshToken(payload);
@@ -30,7 +31,7 @@ describe("Unit tests", () => {
     expect(JWTService.generateToken).to.have.been.called();
   });
 
-  it("generateAccessAndRefreshTokens calls generateAccessToken and generateRefreshToken", () => {
+  it("AuthUseCases.generateAccessAndRefreshTokens calls generateAccessToken and generateRefreshToken", () => {
     const payload = "test";
 
     chai.spy.on(AuthUseCases, "generateAccessToken");
@@ -43,6 +44,20 @@ describe("Unit tests", () => {
 
     expect(AuthUseCases.generateAccessToken).to.have.been.called.with(payload);
     expect(AuthUseCases.generateRefreshToken).to.have.been.called.with(payload);
+  });
+
+  it("AuthUseCases.createUser creates user with hashed password", async () => {
+    const user: User = {
+      username: "test",
+      password: "Password1",
+    };
+    chai.spy.on(UsersDBFunctions, "create");
+
+    expect(UsersDBFunctions.create).to.not.have.been.called();
+
+    await AuthUseCases.createUser(user);
+
+    expect(UsersDBFunctions.create).to.have.been.called.with(user);
   });
 });
 
@@ -92,6 +107,8 @@ describe("Authentication", () => {
     expect(access_token).to.not.exist;
     expect(refresh_token).to.not.exist;
   });
+
+  // should fail to access refresh without access token
 
   it("on refresh should receive access token if refresh token exists", async () => {
     const user: User = {

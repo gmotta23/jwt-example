@@ -9,10 +9,6 @@ app.use(express.json());
 app.use(morgan("combined"));
 app.use("/", IndexRouter);
 
-// app.get("/test", (req, res: Response) => {
-//   res.json("ok");
-// });
-
 app.listen(process.env.SERVER_PORT, () =>
   console.log("Listening on PORT " + process.env.SERVER_PORT)
 );

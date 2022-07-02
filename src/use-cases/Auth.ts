@@ -2,19 +2,19 @@ require("dotenv").config();
 import { User } from "../db/postgres";
 import { UsersDBFunctions } from "../db/postgres/functions";
 import { RedisFunctions } from "../db/redis/functions";
-import { JWTService } from "../services/Auth";
+import { BCryptService } from "../services/bcrypt";
+import { JWTService } from "../services/jwt";
 
 const AuthUseCases = {
-  createUser: (user: User) => {
-    // ideally hashing should be used here
+  createUser: async (user: User) => {
+    user.password = await BCryptService.hash(user.password);
     return UsersDBFunctions.create(user);
   },
   getUserByUsername: (username: string) => {
     return UsersDBFunctions.getByUsername(username);
   },
-  passwordIsValid: (input_password: string, db_password: string) => {
-    // ideally hashing should be used here
-    return input_password === db_password;
+  passwordIsValid: async (input_password: string, db_password: string) => {
+    return await BCryptService.compare(input_password, db_password);
   },
   generateAccessToken: (payload: any) => {
     return JWTService.generateToken(

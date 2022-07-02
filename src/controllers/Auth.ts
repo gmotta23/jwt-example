@@ -37,7 +37,7 @@ const AuthController = {
       });
     }
 
-    const passwordIsValid = AuthUseCases.passwordIsValid(
+    const passwordIsValid = await AuthUseCases.passwordIsValid(
       password,
       user.password
     );
