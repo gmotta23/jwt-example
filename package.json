@@ -7,7 +7,8 @@
     "dev": "tsc-watch --onSuccess 'node build/app.js'",
     "build": "tsc",
     "start": "node build/app.js",
-    "test-watch": "tsc-watch --onSuccess 'ts-mocha src/test/index.test.ts'"
+    "test": "jest --watchAll",
+    "test-watch": "jest --watchAll"
   },
   "repository": {
     "type": "git",
@@ -30,24 +31,20 @@
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.2",
-    "@types/chai": "^4.3.0",
-    "@types/chai-spies": "^1.0.3",
     "@types/express": "^4.17.13",
+    "@types/jest": "^28.1.4",
     "@types/jsonwebtoken": "^8.5.8",
-    "@types/mocha": "^9.1.0",
     "@types/morgan": "^1.9.3",
     "@types/node": "^17.0.13",
     "@types/redis": "^4.0.11",
     "@types/supertest": "^2.0.11",
     "@typescript-eslint/eslint-plugin": "^5.29.0",
     "@typescript-eslint/parser": "^5.29.0",
-    "chai": "^4.3.6",
-    "chai-spies": "^1.0.0",
     "eslint-plugin-prettier": "^4.0.0",
-    "mocha": "^9.2.0",
+    "jest": "^28.1.2",
     "prettier": "^2.7.1",
     "supertest": "^6.2.2",
-    "ts-mocha": "^10.0.0",
+    "ts-jest": "^28.0.5",
     "tsc-watch": "^4.6.0",
     "typescript": "^4.5.5"
   }
